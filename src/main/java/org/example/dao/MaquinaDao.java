@@ -40,16 +40,34 @@ public class MaquinaDao {
              PreparedStatement stmt = connection.prepareStatement(query)) {
             ResultSet rs = stmt.executeQuery();
 
-            while (rs.next()){
+            while (rs.next()) {
                 int id = rs.getInt("id");
                 String nome = rs.getString("nome");
                 String setor = rs.getString("setor");
 
-                Maquina maquina = new Maquina(id, nome, setor);
+                var maquina = new Maquina(id, nome, setor);
                 maquinas.add(maquina);
             }
         }
         return maquinas;
+    }
+
+
+    public boolean verificaMaquinaDuplicada(Maquina maquina) throws SQLException {
+        String query = "SELECT COUNT(0) AS linhas FROM Maquina WHERE nome = ? AND setor = ? ";
+
+        try (Connection connection = Conexao.conectar();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, maquina.getNome());
+            stmt.setString(2, maquina.getSetor());
+
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next() && rs.getInt("linhas") > 0) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

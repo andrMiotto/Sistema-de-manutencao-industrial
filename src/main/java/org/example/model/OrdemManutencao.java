@@ -4,10 +4,10 @@ import java.time.LocalDate;
 
 public class OrdemManutencao {
     private int id;
-    private  int idMaquina;
-    private  int idTecnico;
-    private  LocalDate dataSolicitacao;
-    private  StatusOrdemManutencao status;
+    private int idMaquina;
+    private int idTecnico;
+    private LocalDate dataSolicitacao;
+    private StatusOrdemManutencao status;
 
     public OrdemManutencao(int idMaquina, int idTecnico) {
         this.idMaquina = idMaquina;
@@ -24,6 +24,12 @@ public class OrdemManutencao {
         this.status = status;
     }
 
+    public OrdemManutencao(int id, int idMaquina, int idTecnico) {
+        this.id = id;
+        this.idMaquina = idMaquina;
+        this.idTecnico = idTecnico;
+
+    }
 
 
     public int getIdMaquina() {

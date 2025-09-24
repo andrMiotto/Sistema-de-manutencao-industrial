@@ -42,4 +42,6 @@ public class Tecnico {
     public void setEspecialdiade(String especialdiade) {
         this.especialdiade = especialdiade;
     }
+
+
 }

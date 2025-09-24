@@ -1,5 +1,6 @@
 package org.example.dao;
 
+import org.example.model.Maquina;
 import org.example.model.Tecnico;
 import org.example.util.Conexao;
 
@@ -44,12 +45,30 @@ public class TecnicoDao {
                 String nome = rs.getString("nome");
                 String especialidade = rs.getString("especialidade");
 
-                Tecnico tecnico = new Tecnico(id,nome, especialidade);
+                Tecnico tecnico = new Tecnico(id, nome, especialidade);
                 tecnicos.add(tecnico);
             }
         }
 
         return tecnicos;
+    }
+
+    public boolean verificaTecnicoDuplicado(Tecnico tecnico) throws SQLException {
+        String query = "SELECT COUNT(0) AS linhas FROM Tecnico WHERE nome = ? AND especialidade = ? ";
+
+        try (Connection connection = Conexao.conectar();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
+
+            stmt.setString(1, tecnico.getNome());
+            stmt.setString(2, tecnico.getEspecialdiade());
+
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next() && rs.getInt("linhas") > 0) {
+                return true;
+            }
+        }
+        return false;
     }
 
 

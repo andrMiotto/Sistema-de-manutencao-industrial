@@ -89,13 +89,23 @@ public class Main {
         System.out.println("Digite o setor da maquina: ");
         String setor = SC.nextLine();
 
-        try {
-            var maquina = new Maquina(nome, setor);
-            dao.cadastrarMaquina(maquina);
-            System.out.println("Maquina cadastrada com sucesso!!!");
+        if (!nome.isEmpty() && !setor.isEmpty()) {
 
-        } catch (SQLException e) {
-            e.printStackTrace();
+            var maquina = new Maquina(nome, setor);
+
+            try {
+                if (dao.verificaMaquinaDuplicada(maquina)) {
+                    dao.cadastrarMaquina(maquina);
+                    System.out.println("Maquina cadastrada com sucesso!!!");
+                } else {
+                    System.out.println("Maquina ja cadastrada");
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+        } else {
+            System.out.println("Nome da maquina ou setor não podem ser nulos");
         }
 
     }
@@ -110,14 +120,25 @@ public class Main {
         System.out.println("Digite a especialidade: ");
         String especialidade = SC.nextLine();
 
-        try {
-            var tecnico = new Tecnico(nome, especialidade);
-            dao.cadastrarTecnico(tecnico);
-            System.out.println("Técnico cadastrado com sucesso!!!");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
 
+        var tecnico = new Tecnico(nome, especialidade);
+
+        if (!nome.isEmpty() && !especialidade.isEmpty()) {
+
+            try {
+                if (dao.verificaTecnicoDuplicado(tecnico)) {
+                    dao.cadastrarTecnico(tecnico);
+                    System.out.println("Técnico cadastrado com sucesso!!!");
+                } else {
+                    System.out.println("Tecnico ja cadastrado");
+
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("Nome ou especialidade não podem ser nulas");
+        }
     }
 
     public static void cadastrarPeca() throws SQLException {
@@ -130,14 +151,23 @@ public class Main {
         System.out.println("Digite a quantidade em estoque: ");
         Double estoque = SC.nextDouble();
 
-        try {
+        if (nome.isEmpty()) {
             var peca = new Peca(nome, estoque);
-            dao.cadastrarPeca(peca);
-            System.out.println("Peça cadastrada com sucesso!!!");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
 
+            try {
+                if (dao.verificaPecaDuplicada(peca)) {
+                    dao.cadastrarPeca(peca);
+                    System.out.println("Peça cadastrada com sucesso!!!");
+                } else {
+                    System.out.println("Peça já cadastrada");
+
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("Nome não pode ser nulo");
+        }
     }
 
     public static void criarManutencao() throws SQLException {
@@ -152,8 +182,11 @@ public class Main {
 
         System.out.println(">>>       MÁQUINAS CADASTRADAS      <<<");
         for (Maquina m : listaMaquinas) {
-            System.out.println(m.getId() + "-" + m.getNome() + "-" + m.getSetor());
+            System.out.println("ID: "+m.getId() + "\n"+" Nome: " + m.getNome() + "\n Setor: " + m.getSetor());
+
         }
+
+
 
         System.out.println("Escolha a maquina: ");
         int idMaquina = SC.nextInt();
@@ -161,17 +194,19 @@ public class Main {
 
         List<Tecnico> listaTecnicos = tecnicosDao.listarTodos();
 
+
+
         System.out.println(">>>       TÉCNICOS DISPONÍVEIS      <<<");
-        for(Tecnico t: listaTecnicos){
-            System.out.println(t.getId()+" - "+t.getNome()+" - "+t.getEspecialdiade());
+        for (Tecnico t : listaTecnicos) {
+            System.out.println(t.getId() + " - " + t.getNome() + " - " + t.getEspecialdiade());
         }
 
         System.out.println("Escolha o técnico: ");
         int idTecnico = SC.nextInt();
         SC.nextLine();
 
-        try{
-            var ordem = new OrdemManutencao(idMaquina,idTecnico);
+        try {
+            var ordem = new OrdemManutencao(idMaquina, idTecnico);
             dao.criarOrdem(ordem);
             System.out.println("Ordem de manutenção criada com sucesso!!!");
         } catch (SQLException e) {
@@ -180,6 +215,42 @@ public class Main {
     }
 
     public static void associarPecaOrdem() throws SQLException {
+
+        var dao = new OrdemDao();
+
+        System.out.println("===      ASSOCIAR PEÇAS À ORDEM       ===");
+
+        System.out.println("ID | Máquina(Pendente) | Técnico ");
+        System.out.println("-------------------------------------------------");
+        List<OrdemManutencao> listaOrdens = dao.listarTodas();
+
+        for (OrdemManutencao o : listaOrdens) {
+            System.out.println(o.getId() + "-" + o.getIdMaquina() + "-" + o.getIdTecnico());
+        }
+
+        System.out.println("Escolha a ordem: ");
+        int idOrdem = SC.nextInt();
+        SC.nextLine();
+
+
+        var pecaDao = new PecaDao();
+        List<Peca> listaPecas = pecaDao.listarTodas();
+
+
+        System.out.println("ID | Nome | Estoque ");
+        System.out.println("-------------------------------------------------");
+        for (Peca p : listaPecas) {
+            System.out.println(p.getId() + " - " + p.getNome() + " - " + p.getEstoque());
+        }
+
+        System.out.println("Escolha a peça: ");
+        int idPeca = SC.nextInt();
+        SC.nextLine();
+
+        System.out.println("Digite a quantidade necessaria da peça: ");
+        double quantidadeNecessaria = SC.nextDouble();
+        SC.nextLine();
+
 
     }
 
